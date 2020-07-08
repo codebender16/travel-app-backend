@@ -11,3 +11,5 @@ Trip.create(
   airline: 'Malindo',
   year: 2020
 )
+
+
