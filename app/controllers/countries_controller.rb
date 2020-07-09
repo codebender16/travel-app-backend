@@ -1,6 +1,6 @@
 class CountriesController < ApplicationController
   before_action :find_country, only: %i[show update destroy]
-
+  before_action :authenticate_user
   def index
     @countries = Country.all
     render json: @countries
@@ -11,11 +11,11 @@ class CountriesController < ApplicationController
   end
 
   def create
-    country = Country.new(country_params)
+    country = current_user.countries.new(country_params)
     if(country.save)
       render header: :created
     else
-      render json: {error: country.errors.full_messages}, status: :unprocessable_entity
+      render json: { error: country.errors.full_messages}, status: :unprocessable_entity
     end
   end
 
@@ -23,7 +23,7 @@ class CountriesController < ApplicationController
     if @country.update(country_params)
       render status: :no_content
     else
-      render json: {error: @country.errors.full_messages}, status: :unprocessable_entity
+      render json: { error: @country.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -35,13 +35,11 @@ class CountriesController < ApplicationController
   private
 
   def country_params
-    params.require(:country).permit(:name, :description, :airline, :year)
+    params.require(:country).permit(:name)
   end
 
   def find_country
     @country = Country.find(params[:id])
   end
-
-  
 
 end
